@@ -6,6 +6,10 @@ from .models import Order, CleaningOrderStatus
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.views import View
+
 
 class OrderList(generics.ListCreateAPIView):
     queryset = Order.objects.filter(deleted=False)
@@ -50,3 +54,48 @@ class OrderUpdate(generics.UpdateAPIView):
 class OrderDestroy(generics.DestroyAPIView):
     queryset = Order.objects.all()
     lookup_field = 'id'
+
+
+class CompleteOrderView(View):
+    def post(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+
+        if order.status == CleaningOrderStatus.IN_PROGRESS.name:
+            order.status = CleaningOrderStatus.COMPLETED.name
+            order.save()
+            return JsonResponse({'status': 'success', 'message': 'Order status has been updated to completed.'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to completed when status is INPROGRESS.'})
+
+
+class ConfirmOrderView(View):
+    def post(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+
+        if order.status == CleaningOrderStatus.COMPLETED.name:
+            order.status = CleaningOrderStatus.CONFIRMED.name
+            order.save()
+            return JsonResponse({'status': 'success', 'message': 'Order status has been updated to completed.'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to completed when status is COMPLETED.'})
+
+
+class StartOrderView(View):
+    def post(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+
+        if order.status == CleaningOrderStatus.PLANNED.name:
+            order.status = CleaningOrderStatus.IN_PROGRESS.name
+            order.save()
+            return JsonResponse({'status': 'success', 'message': 'Order status has been updated to completed.'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to completed when status is PLANNED.'})
+
+
+class DeclineOrderView(View):
+    def post(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+        order.status = CleaningOrderStatus.DECLINED.name
+        order.save()
+        return JsonResponse({'status': 'success', 'message': 'Order status has been updated to completed.'})
+

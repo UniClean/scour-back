@@ -4,6 +4,7 @@ from objects import models as object_models
 
 import enum
 
+
 class CleaningOrderType(enum.Enum):
     DAILY = 'daily'
     WEEKLY = 'weekly'

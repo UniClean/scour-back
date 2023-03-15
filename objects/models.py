@@ -29,5 +29,6 @@ class Object(models.Model):
         # self.deleted_by = deleted_by
         self.save()
 
+
     def __str__(self):
         return self.name

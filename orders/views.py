@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from rest_framework import generics
 from .serializers import OrderSerializer, OrderCreateSerializer
-from .models import Order
+from .models import Order, CleaningOrderStatus
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -26,6 +26,7 @@ class OrderList(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer_class = self.get_serializer_class()
+
         serializer = serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()

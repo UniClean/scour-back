@@ -8,8 +8,8 @@ class Customer(models.Model):
     is_vip = models.BooleanField(default=False)
     additional_information = models.TextField(blank=True, null=True)
 
-    email_customer = models.CharField(max_length=150, null=True)
-    website_customer = models.CharField(max_length=150, null=True)
+    email = models.CharField(max_length=150, null=True)
+    website = models.CharField(max_length=150, null=True)
 
     image_url = models.URLField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)

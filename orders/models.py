@@ -1,11 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from objects import models as object_models
+from enumchoicefield import ChoiceEnum, EnumChoiceField
 
-import enum
 
-
-class CleaningOrderType(enum.Enum):
+class CleaningOrderType(ChoiceEnum):
     DAILY = 'daily'
     WEEKLY = 'weekly'
     MONTHLY = 'monthly'
@@ -13,7 +12,7 @@ class CleaningOrderType(enum.Enum):
     OTHER = 'other'
 
 
-class CleaningOrderStatus(enum.Enum):
+class CleaningOrderStatus(ChoiceEnum):
     PLANNED = 'planned'
     IN_PROGRESS = 'in_progress'
     COMPLETED = 'completed'
@@ -25,9 +24,8 @@ class CleaningOrderStatus(enum.Enum):
 
 class Order(models.Model):
     object_id = models.ForeignKey(object_models.Object, on_delete=models.CASCADE)
-    type = models.CharField(max_length=100, choices=[(tag.name, tag.value) for tag in CleaningOrderType])
-    status = models.CharField(max_length=100, choices=[(tag.name, tag.value) for tag in CleaningOrderStatus],
-                              default=CleaningOrderStatus.PLANNED.name)
+    type = EnumChoiceField(CleaningOrderType, default=CleaningOrderType.OTHER)
+    status = EnumChoiceField(CleaningOrderStatus, default=CleaningOrderStatus.PLANNED)
     additional_information = models.TextField(blank=True, null=True)
     accept_time = models.DateTimeField(null=True)
     completed_time = models.DateTimeField(null=True)

@@ -1,10 +1,13 @@
 from rest_framework import serializers
-from .models import Order
+from .models import Order, CleaningOrderStatus, CleaningOrderType
 from objects.serializers import ObjectSerializer
+from enumchoicefield import EnumChoiceField
 
 
 class OrderSerializer(serializers.ModelSerializer):
     object = ObjectSerializer(source='object_id', many=False, read_only=True)
+    type = EnumChoiceField(enum_class=CleaningOrderType)
+    status = EnumChoiceField(enum_class=CleaningOrderStatus)
 
     class Meta:
         model = Order

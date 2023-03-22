@@ -1,10 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework import generics
-from .serializers import OrderSerializer, OrderCreateSerializer
+from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer
 from .models import Order, CleaningOrderStatus
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
+from employees import models as employee_models
+from drf_yasg.utils import swagger_auto_schema
 
 
 class OrderList(generics.ListCreateAPIView):
@@ -84,4 +86,16 @@ def decline_order(request, order_id):
     order.status = CleaningOrderStatus.DECLINED
     order.save()
     return JsonResponse({'status': 'success', 'message': 'Order status has been updated to declined.'})
+
+
+@swagger_auto_schema(method='post', request_body=OrderAssignEmployeesSerializer)
+@api_view(['POST'])
+def assign_employees(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    employee_ids = request.data.get('employee_ids', [])
+    for i in employee_ids:
+        employee = employee_models.Employee.objects.get(pk=i)
+        order.employees.add(employee)
+    order.save()
+    return JsonResponse({'status': 'success', 'message': 'Employees have been assigned to the order.'})
 

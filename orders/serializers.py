@@ -19,3 +19,11 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['object_id', 'type', 'additional_information',]
+
+
+class OrderAssignEmployeesSerializer(serializers.ModelSerializer):
+    employeeIds = serializers.ListField(child=serializers.IntegerField())
+
+    class Meta:
+        model = Order
+        fields = ['employeeIds']

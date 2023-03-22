@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from objects import models as object_models
 from enumchoicefield import ChoiceEnum, EnumChoiceField
+from employees import models as employee_models
 
 
 class CleaningOrderType(ChoiceEnum):
@@ -30,6 +31,7 @@ class Order(models.Model):
     accept_time = models.DateTimeField(null=True)
     completed_time = models.DateTimeField(null=True)
     supervisor_comments = models.TextField(blank=True, null=True)
+    assigned_employees = models.ManyToManyField(employee_models.Employee, blank=True)
 
     report_deadline = models.DateTimeField(blank=True, null=True)
     start_when = models.DateTimeField(blank=True, null=True)

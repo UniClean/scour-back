@@ -10,6 +10,7 @@ class Customer(models.Model):
 
     email = models.CharField(max_length=150, null=True)
     website = models.CharField(max_length=150, null=True)
+    phone_number = models.CharField(max_length=150, null=True)
 
     image_url = models.URLField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)

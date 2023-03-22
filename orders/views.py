@@ -92,7 +92,7 @@ def decline_order(request, order_id):
 @api_view(['POST'])
 def assign_employees(request, order_id):
     order = Order.objects.get(pk=order_id)
-    employee_ids = request.data.get('employee_ids', [])
+    employee_ids = request.data.get('employeeIds', [])
     for i in employee_ids:
         employee = employee_models.Employee.objects.get(pk=i)
         order.employees.add(employee)

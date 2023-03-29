@@ -2,7 +2,7 @@ from datetime import datetime
 
 from rest_framework.decorators import api_view
 from rest_framework import generics
-from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer
+from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer, OrderAddSupervisorCommentSerializer
 from .models import Order, CleaningOrderStatus
 from rest_framework.response import Response
 from rest_framework import status
@@ -104,3 +104,11 @@ def assign_employees(request, order_id):
     order.save()
     return JsonResponse({'status': 'success', 'message': 'Employees have been assigned to the order.'})
 
+
+@swagger_auto_schema(method='post', request_body=OrderAddSupervisorCommentSerializer)
+@api_view(['POST'])
+def add_supervisor_comments(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    order.supervisor_comment = request.data.get('supervisor_comments')
+    order.save()
+    return JsonResponse({'status': 'success', 'message': 'Supervisor comment has been updated.'})

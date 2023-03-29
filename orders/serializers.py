@@ -27,3 +27,9 @@ class OrderAssignEmployeesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['employeeIds']
+
+
+class OrderAddSupervisorCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['supervisor_comments']

@@ -11,5 +11,5 @@ class ObjectSerializer(serializers.ModelSerializer):
 class ObjectCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Object
-        fields = ['customer_id', 'name', 'address', 'area', 'object_image_url', 'additional_information',
+        fields = ['customer_id', 'assigned_supervisor_id', 'name', 'address', 'area', 'object_image_url', 'additional_information',
                   'required_worker_amount']

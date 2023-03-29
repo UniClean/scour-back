@@ -18,7 +18,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['object_id', 'type', 'additional_information',]
+        fields = ['object_id', 'type', 'additional_information', 'report_deadline']
 
 
 class OrderAssignEmployeesSerializer(serializers.ModelSerializer):
@@ -27,3 +27,9 @@ class OrderAssignEmployeesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['employeeIds']
+
+
+class OrderAddSupervisorCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['supervisor_comments']

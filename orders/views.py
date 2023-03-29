@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from rest_framework.decorators import api_view
 from rest_framework import generics
-from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer
+from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer, OrderAddSupervisorCommentSerializer
 from .models import Order, CleaningOrderStatus
 from rest_framework.response import Response
 from rest_framework import status
@@ -58,6 +60,7 @@ def complete_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.IN_PROGRESS:
         order.status = CleaningOrderStatus.COMPLETED
+        order.completed_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to completed.'})
     return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to completed when status is INPROGRESS.'})
@@ -67,6 +70,7 @@ def confirm_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.COMPLETED:
         order.status = CleaningOrderStatus.CONFIRMED
+        order.confirmed_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to confirmed.'})
     return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to confirmed when status is COMPLETED.'})
@@ -76,6 +80,7 @@ def start_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.PLANNED:
         order.status = CleaningOrderStatus.IN_PROGRESS
+        order.start_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to in progress.'})
     return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to in progress when status is PLANNED.'})
@@ -99,3 +104,11 @@ def assign_employees(request, order_id):
     order.save()
     return JsonResponse({'status': 'success', 'message': 'Employees have been assigned to the order.'})
 
+
+@swagger_auto_schema(method='post', request_body=OrderAddSupervisorCommentSerializer)
+@api_view(['POST'])
+def update_supervisor_comments(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    order.supervisor_comment = request.data.get('supervisor_comments')
+    order.save()
+    return JsonResponse({'status': 'success', 'message': 'Supervisor comment has been updated.'})

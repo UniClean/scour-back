@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from customers import models as customer_models
+from employees.models import Employee
+
 
 class Object(models.Model):
     customer_id = models.ForeignKey(customer_models.Customer, on_delete=models.CASCADE)
@@ -10,6 +12,7 @@ class Object(models.Model):
     object_image_url = models.URLField(blank=True, null=True)
     additional_information = models.TextField(blank=True, null=True)
     required_worker_amount = models.IntegerField()
+    assigned_supervisor_id = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -28,7 +31,6 @@ class Object(models.Model):
         self.deleted_date = timezone.now()
         # self.deleted_by = deleted_by
         self.save()
-
 
     def __str__(self):
         return self.name

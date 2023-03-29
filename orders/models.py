@@ -28,13 +28,15 @@ class Order(models.Model):
     type = EnumChoiceField(CleaningOrderType, default=CleaningOrderType.OTHER)
     status = EnumChoiceField(CleaningOrderStatus, default=CleaningOrderStatus.PLANNED)
     additional_information = models.TextField(blank=True, null=True)
-    accept_time = models.DateTimeField(null=True)
-    completed_time = models.DateTimeField(null=True)
+
     supervisor_comments = models.TextField(blank=True, null=True)
     assigned_employees = models.ManyToManyField(employee_models.Employee, blank=True)
 
     report_deadline = models.DateTimeField(blank=True, null=True)
-    start_when = models.DateTimeField(blank=True, null=True)
+
+    confirmed_time = models.DateTimeField(null=True)
+    start_time = models.DateTimeField(blank=True, null=True)
+    completed_time = models.DateTimeField(null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

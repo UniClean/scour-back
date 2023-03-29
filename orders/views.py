@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework.decorators import api_view
 from rest_framework import generics
 from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer
@@ -58,6 +60,7 @@ def complete_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.IN_PROGRESS:
         order.status = CleaningOrderStatus.COMPLETED
+        order.completed_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to completed.'})
     return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to completed when status is INPROGRESS.'})
@@ -67,6 +70,7 @@ def confirm_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.COMPLETED:
         order.status = CleaningOrderStatus.CONFIRMED
+        order.confirmed_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to confirmed.'})
     return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to confirmed when status is COMPLETED.'})
@@ -76,6 +80,7 @@ def start_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.PLANNED:
         order.status = CleaningOrderStatus.IN_PROGRESS
+        order.start_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to in progress.'})
     return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to in progress when status is PLANNED.'})

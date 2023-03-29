@@ -3,6 +3,7 @@ from .serializers import EmployeeSerializer, EmployeeCreateSerializer, PositionS
 from .models import Employee, Position
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 
 
 class EmployeeList(generics.ListCreateAPIView):
@@ -30,6 +31,12 @@ class EmployeeList(generics.ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class EmployeeListByPosition(APIView):
+    def get(self, request, position_id):
+        employees = Employee.objects.filter(position_id=position_id)
+        serializer = EmployeeSerializer(employees, many=True)
+        return Response(serializer.data)
 
 
 class EmployeeDetail(generics.RetrieveAPIView):

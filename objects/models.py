@@ -3,6 +3,7 @@ from django.utils import timezone
 from customers import models as customer_models
 from employees.models import Employee
 
+
 class Object(models.Model):
     customer_id = models.ForeignKey(customer_models.Customer, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -30,7 +31,6 @@ class Object(models.Model):
         self.deleted_date = timezone.now()
         # self.deleted_by = deleted_by
         self.save()
-
 
     def __str__(self):
         return self.name

@@ -107,7 +107,7 @@ def assign_employees(request, order_id):
 
 @swagger_auto_schema(method='post', request_body=OrderAddSupervisorCommentSerializer)
 @api_view(['POST'])
-def add_supervisor_comments(request, order_id):
+def update_supervisor_comments(request, order_id):
     order = Order.objects.get(pk=order_id)
     order.supervisor_comment = request.data.get('supervisor_comments')
     order.save()

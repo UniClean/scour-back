@@ -33,7 +33,7 @@ class Order(models.Model):
     assigned_employees = models.ManyToManyField(employee_models.Employee, blank=True)
 
     report_deadline = models.DateTimeField(blank=True, null=True)
-
+    expiration_deadline = models.DateTimeField(blank=True, null=True)
     confirmed_time = models.DateTimeField(null=True)
     start_time = models.DateTimeField(blank=True, null=True)
     completed_time = models.DateTimeField(null=True)

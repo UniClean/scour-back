@@ -18,7 +18,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['object_id', 'type', 'additional_information', 'report_deadline']
+        fields = ['object_id', 'type', 'additional_information', 'report_deadline', 'expiration_deadline']
 
 
 class OrderAssignEmployeesSerializer(serializers.ModelSerializer):

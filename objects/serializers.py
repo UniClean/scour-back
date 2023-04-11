@@ -27,6 +27,7 @@ class ObjectCreateSerializer(serializers.ModelSerializer):
 
 
 class RequiredObjectInventorySerializer(serializers.ModelSerializer):
+    inventory = ShortCustomerSerializer(source='inventory_id', many=False, read_only=True)
     class Meta:
         model = RequiredObjectInventory
         fields = '__all__'
@@ -36,6 +37,7 @@ class RequiredObjectInventoryCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequiredObjectInventory
         fields = ['object_id', 'inventory_id', 'amount']
+
 
 class RequiredObjectInventoryCreateListSerializer(serializers.ModelSerializer):
     required_object_inventories = RequiredObjectInventoryCreateSerializer(many=True)

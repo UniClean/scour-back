@@ -8,6 +8,11 @@ class InventorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ShortInventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ['name']
+
 class InventoryCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inventory

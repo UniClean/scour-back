@@ -36,6 +36,15 @@ class EquipmentList(generics.ListCreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class EquipmentListByObjectId(generics.ListAPIView):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
+    def get_queryset(self, *args, **kwargs):
+        object_id = self.kwargs['object_id']
+        queryset = Equipment.objects.filter(object_id_id=object_id)
+        return queryset
+
+
 class EquipmentDetail(generics.RetrieveAPIView):
     queryset = Equipment.objects.all()
     serializer_class = EquipmentSerializer

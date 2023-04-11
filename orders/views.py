@@ -2,13 +2,16 @@ from datetime import datetime
 
 from rest_framework.decorators import api_view
 from rest_framework import generics
-from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer, OrderAddSupervisorCommentSerializer
+from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer, \
+    OrderEmployeeCreateSerializer, OrderEmployeeCreateListSerializer, OrderAddSupervisorCommentSerializer
 from .models import Order, CleaningOrderStatus
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from employees import models as employee_models
 from drf_yasg.utils import swagger_auto_schema
+from .models import OrderEmployee
+from .serializers import OrderEmployeeSerializer
 
 
 class OrderList(generics.ListCreateAPIView):
@@ -55,6 +58,7 @@ class OrderDestroy(generics.DestroyAPIView):
     queryset = Order.objects.all()
     lookup_field = 'id'
 
+
 @api_view(['POST'])
 def complete_order(request, order_id):
     order = Order.objects.get(pk=order_id)
@@ -63,7 +67,9 @@ def complete_order(request, order_id):
         order.completed_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to completed.'})
-    return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to completed when status is INPROGRESS.'})
+    return JsonResponse(
+        {'status': 'error', 'message': 'Order status can only be updated to completed when status is INPROGRESS.'})
+
 
 @api_view(['POST'])
 def confirm_order(request, order_id):
@@ -73,7 +79,9 @@ def confirm_order(request, order_id):
         order.confirmed_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to confirmed.'})
-    return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to confirmed when status is COMPLETED.'})
+    return JsonResponse(
+        {'status': 'error', 'message': 'Order status can only be updated to confirmed when status is COMPLETED.'})
+
 
 @api_view(['POST'])
 def start_order(request, order_id):
@@ -83,7 +91,9 @@ def start_order(request, order_id):
         order.start_time = datetime.now()
         order.save()
         return JsonResponse({'status': 'success', 'message': 'Order status has been updated to in progress.'})
-    return JsonResponse({'status': 'error', 'message': 'Order status can only be updated to in progress when status is PLANNED.'})
+    return JsonResponse(
+        {'status': 'error', 'message': 'Order status can only be updated to in progress when status is PLANNED.'})
+
 
 @api_view(['POST'])
 def decline_order(request, order_id):
@@ -112,3 +122,28 @@ def update_supervisor_comments(request, order_id):
     order.supervisor_comment = request.data.get('supervisor_comments')
     order.save()
     return JsonResponse({'status': 'success', 'message': 'Supervisor comment has been updated.'})
+
+
+@swagger_auto_schema(method='post', request_body=OrderEmployeeCreateListSerializer)
+@api_view(['POST'])
+def assign_employees_to_order(request, order_id):
+    try:
+        order = Order.objects.get(pk=order_id)
+    except Order.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Order does not exist.'})
+
+    employees = request.data.get('employees', [])
+    serializer = OrderEmployeeCreateSerializer(data=employees, many=True)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse({'status': 'success', 'message': 'Employees have been assigned to the order.'})
+    return JsonResponse({'status': 'error', 'message': serializer.errors})
+
+
+class OrderEmployeeList(generics.ListAPIView):
+    queryset = OrderEmployee.objects.all()
+    serializer_class = OrderEmployeeSerializer
+    def get_queryset(self, *args, **kwargs):
+        order_id = self.kwargs['order_id']
+        queryset = OrderEmployee.objects.filter(order_id_id=order_id)
+        return queryset

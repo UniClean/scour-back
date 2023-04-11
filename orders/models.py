@@ -30,7 +30,6 @@ class Order(models.Model):
     additional_information = models.TextField(blank=True, null=True)
 
     supervisor_comments = models.TextField(blank=True, null=True)
-    assigned_employees = models.ManyToManyField(employee_models.Employee, blank=True)
 
     report_deadline = models.DateTimeField(blank=True, null=True)
     expiration_deadline = models.DateTimeField(blank=True, null=True)
@@ -49,7 +48,29 @@ class Order(models.Model):
         # self.deleted_by = deleted_by
         self.save()
 
+    # deleted_by = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True
+    # )
 
+
+class OrderEmployee(models.Model):
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(employee_models.Employee, on_delete=models.SET_NULL, null=True)
+    worked_hours_amount = models.IntegerField(default=0)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+    deleted_date = models.DateTimeField(blank=True, null=True)
+
+    def delete(self, using=None, keep_parents=True, deleted_by=None):
+        self.deleted = True
+        self.deleted_date = timezone.now()
+        # self.deleted_by = deleted_by
+        self.save()
 
     # deleted_by = models.ForeignKey(
     #     settings.AUTH_USER_MODEL,
@@ -57,4 +78,3 @@ class Order(models.Model):
     #     blank=True,
     #     null=True
     # )
-# Create your models here.

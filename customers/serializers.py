@@ -8,6 +8,12 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ShortCustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['id', 'name', 'is_vip']
+
+
 class CustomerCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer

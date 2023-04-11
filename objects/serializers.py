@@ -8,6 +8,12 @@ class ObjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ShortObjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Object
+        fields = ['id', 'name', 'address']
+
+
 class ObjectCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Object

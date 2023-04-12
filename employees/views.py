@@ -27,8 +27,8 @@ class EmployeeList(generics.ListCreateAPIView):
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            item = serializer.save()
+            return Response({"id": item.id, "data": serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -77,8 +77,8 @@ class PositionList(generics.ListCreateAPIView):
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            item = serializer.save()
+            return Response({"id": item.id, "data": serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

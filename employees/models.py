@@ -1,6 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from enumchoicefield import ChoiceEnum, EnumChoiceField
 
+class Rate(ChoiceEnum):
+    HOUR = 'hour'
+    MONTH = 'month'
+    OTHER = 'other'
 
 class Employee(models.Model):
     first_name = models.CharField(max_length=50)
@@ -9,9 +14,10 @@ class Employee(models.Model):
     position_id = models.ForeignKey('Position', on_delete=models.SET_NULL , blank=True, null=True)
     phone = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
-    date_of_birth = models.DateField()
-    date_of_employment = models.DateField()
+    date_of_birth = models.DateTimeField()
+    date_of_employment = models.DateTimeField()
     salary = models.FloatField()
+    rate = EnumChoiceField(Rate, default=Rate.HOUR)
     address = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
 

@@ -4,7 +4,7 @@ import employees.views as views
 
 urlpatterns = [
     path('employees/', views.EmployeeList.as_view()),
-    path('employees/<int:position_id>/', views.EmployeeListByPosition.as_view()),
+    path('employees/position/<int:position_id>/', views.EmployeeListByPosition.as_view()),
     path('employees/<int:id>/', views.EmployeeDetail.as_view(), name='employee-retrieve'),
     path('employees/<int:id>/update/', views.EmployeeUpdate.as_view(), name='employee-update'),
     path('employees/<int:id>/delete/', views.EmployeeDestroy.as_view(), name='employee-destroy'),

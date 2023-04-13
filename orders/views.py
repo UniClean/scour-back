@@ -3,14 +3,14 @@ from datetime import datetime
 from rest_framework.decorators import api_view
 from rest_framework import generics
 from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer, \
-    OrderEmployeeCreateSerializer, OrderEmployeeCreateListSerializer, OrderAddSupervisorCommentSerializer
-from .models import Order, CleaningOrderStatus
+    OrderEmployeeCreateSerializer, OrderEmployeeCreateListSerializer, OrderAddSupervisorCommentSerializer, GetOrdersByStatusSerializer
+from .models import Order
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from employees import models as employee_models
 from drf_yasg.utils import swagger_auto_schema
-from .models import OrderEmployee
+from .models import OrderEmployee, CleaningOrderStatus
 from .serializers import OrderEmployeeSerializer
 
 
@@ -146,4 +146,12 @@ class OrderEmployeeList(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         order_id = self.kwargs['order_id']
         queryset = OrderEmployee.objects.filter(order_id_id=order_id)
+        return queryset
+
+class OrderListByStatus(generics.ListAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    def get_queryset(self, *args, **kwargs):
+        status_name = self.kwargs['status']
+        queryset = Order.objects.filter(status=CleaningOrderStatus[status_name])
         return queryset

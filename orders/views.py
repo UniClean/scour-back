@@ -119,7 +119,7 @@ def assign_employees(request, order_id):
 @api_view(['POST'])
 def update_supervisor_comments(request, order_id):
     order = Order.objects.get(pk=order_id)
-    order.supervisor_comment = request.data.get('supervisor_comments')
+    order.supervisor_comments = request.data.get('supervisor_comments')
     order.save()
     return JsonResponse({'status': 'success', 'message': 'Supervisor comment has been updated.'})
 

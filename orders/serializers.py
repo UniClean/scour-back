@@ -55,3 +55,9 @@ class OrderEmployeeCreateListSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderEmployee
         fields = ['employees']
+
+class GetOrdersByStatusSerializer(serializers.ModelSerializer):
+    status = EnumChoiceField(enum_class=CleaningOrderStatus)
+    class Meta:
+        model = Order
+        fields = ['status']

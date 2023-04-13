@@ -14,4 +14,5 @@ urlpatterns = [
     path('orders/<int:order_id>/assign-employees/', views.assign_employees_to_order, name='order-assign-employees'),
     path('orders/<int:order_id>/assigned_employees', views.OrderEmployeeList.as_view(), name='order_employee'),
     path('orders/<int:order_id>/update-supervisor-comments/', views.update_supervisor_comments, name='order-assign-vehicles'),
+    path('orders/status/<str:status>/', views.OrderListByStatus.as_view(), name='order_list_by_status'),
 ]

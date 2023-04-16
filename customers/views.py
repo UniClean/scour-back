@@ -1,8 +1,13 @@
 from rest_framework import generics
-from .serializers import CustomerSerializer, CustomerCreateSerializer
-from .models import Customer
+from .serializers import CustomerSerializer, CustomerCreateSerializer,CustomerContractFileSerializer
+from .models import Customer, CustomerContract
 from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
+from rest_framework.views import APIView
+from rest_framework.exceptions import ParseError
 from rest_framework import status
+from django.utils import timezone
+from django.http import HttpResponse
 
 
 class CustomerList(generics.ListCreateAPIView):
@@ -47,3 +52,39 @@ class CustomerUpdate(generics.UpdateAPIView):
 class CustomerDestroy(generics.DestroyAPIView):
     queryset = Customer.objects.all()
     lookup_field = 'id'
+
+
+class CustomerContractUploadView(APIView):
+    parser_class = (FileUploadParser,)
+
+    def post(self, request, format=None):
+        if 'file' not in request.data:
+            raise ParseError("Empty content")
+        if 'customer_id' not in request.data:
+            raise ParseError("Customer id not provided")
+        customer_id = request.data['customer_id']
+        customer = Customer.objects.get(pk=customer_id)
+        f = request.data['file']
+        f.name = str(customer.id)+ "_" + timezone.now().strftime("%Y%m%d%H%M%S") + "_" + f.name
+        customer_contract = CustomerContract(customer_id=customer, contract_file=f)
+        customer_contract.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+
+class CustomerContractDetail(generics.RetrieveAPIView):
+    queryset = CustomerContract.objects.all()
+    serializer_class = CustomerContractFileSerializer
+    lookup_field = 'id'
+
+def get_contract_file_content(request, id):
+    file = CustomerContract.objects.get(id=id).contract_file
+    file_content = get_file_content(file)
+    response = HttpResponse(file_content, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{file.name}"'
+
+    return response
+
+def get_file_content(file):
+    with file.open('rb') as f:
+        file_content = f.read()
+    return file_content

@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from .models import InventoryOrder, InventoryOrderStatus, InventoryOrderItem
-from objects.serializers import RequiredObjectInventorySerializer
+from objects.serializers import RequiredObjectInventorySerializer, ShortObjectSerializer
 from enumchoicefield import EnumChoiceField
 
 
 class InventoryOrderSerializer(serializers.ModelSerializer):
     status = EnumChoiceField(enum_class=InventoryOrderStatus)
+    object = ShortObjectSerializer(source='object_id', many=False, read_only=True)
 
     class Meta:
         model = InventoryOrder
@@ -15,7 +16,7 @@ class InventoryOrderSerializer(serializers.ModelSerializer):
 class InventoryOrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryOrder
-        fields = ['deadline']
+        fields = ['deadline', 'object_id']
 
 
 class InventoryOrderItemSerializer(serializers.ModelSerializer):

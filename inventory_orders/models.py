@@ -1,5 +1,5 @@
 from django.db import models
-from objects.models import RequiredObjectInventory
+from objects.models import RequiredObjectInventory, Object
 from django.utils import timezone
 from enumchoicefield import ChoiceEnum, EnumChoiceField
 
@@ -13,6 +13,7 @@ class InventoryOrderStatus(ChoiceEnum):
 
 
 class InventoryOrder(models.Model):
+    object_id = models.ForeignKey(Object, on_delete=models.CASCADE, null=True)
     deadline = models.DateTimeField()
     status = EnumChoiceField(InventoryOrderStatus, default=InventoryOrderStatus.CREATED)
 

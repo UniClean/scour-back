@@ -6,7 +6,16 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
+from rest_framework.parsers import FileUploadParser
+from rest_framework.views import APIView
+from django.http import HttpResponse
+from rest_framework.exceptions import ParseError
+from django.utils import timezone
+from django.urls import reverse
+from django.conf import settings
+import os
+import mimetypes
 
 
 class ObjectList(generics.ListCreateAPIView):
@@ -114,3 +123,48 @@ class RequiredObjectInventoryUpdate(generics.UpdateAPIView):
 class RequiredObjectInventoryDestroy(generics.DestroyAPIView):
     queryset = RequiredObjectInventory.objects.all()
     lookup_field = 'id'
+
+
+class ObjectImageUploadView(APIView):
+    parser_class = (FileUploadParser,)
+
+    def post(self, request, format=None):
+        if 'image' not in request.data:
+            raise ParseError("Empty content")
+        if 'object_id' not in request.data:
+            raise ParseError("Object id not provided")
+        object_id = request.data['object_id']
+        object = Object.objects.get(pk=object_id)
+        f = request.data['image']
+        f.name = str(object.id)+ "_" + timezone.now().strftime("%Y%m%d%H%M%S") + "_" + f.name
+        object.object_image = f
+        photo_url = request.build_absolute_uri(reverse('photo_view', args=[f.name]))
+        object.object_image_url = photo_url
+        object.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+def view_that_serves_photo(request, filename):
+
+    photo_path = os.path.join(settings.MEDIA_ROOT + "/images/objects/", filename)
+    print(photo_path)
+
+    return FileResponse(open(photo_path, 'rb'), content_type='image/jpeg')
+
+
+def get_object_image(request, object_id):
+    file = Object.objects.get(id=object_id).object_image
+    print(file)
+    file_content = get_file_content(file)
+    response = HttpResponse(file_content, content_type=get_content_type(file.name))
+    response['Content-Disposition'] = f'attachment; filename="{file.name}"'
+
+    return response
+
+def get_file_content(file):
+    with file.open('rb') as f:
+        file_content = f.read()
+    return file_content
+
+def get_content_type(filename):
+    content_type, encoding = mimetypes.guess_type(filename)
+    return content_type

@@ -88,3 +88,12 @@ def get_file_content(file):
     with file.open('rb') as f:
         file_content = f.read()
     return file_content
+
+
+class ContractsByCustomerId(generics.ListAPIView):
+    queryset = CustomerContract.objects.all()
+    serializer_class = CustomerContractFileSerializer
+    def get_queryset(self, *args, **kwargs):
+        customer_id = self.kwargs['customer_id']
+        queryset = CustomerContract.objects.filter(customer_id_id=customer_id)
+        return queryset

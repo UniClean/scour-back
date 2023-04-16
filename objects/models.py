@@ -10,6 +10,7 @@ class Object(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     area = models.FloatField()
+    object_image = models.ImageField(upload_to='images/objects/', blank=True, null=True)
     object_image_url = models.URLField(blank=True, null=True)
     additional_information = models.TextField(blank=True, null=True)
     required_worker_amount = models.IntegerField()

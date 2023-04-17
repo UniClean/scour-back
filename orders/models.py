@@ -54,6 +54,43 @@ class Order(models.Model):
     #     blank=True,
     #     null=True
     # )
+    def order_attachments_ids(self):
+        return list(self.orderattachment_set.all().values_list('id', flat=True))
+
+    def order_attachment_evidences_ids(self):
+        return list(self.orderattachmentevidence_set.values_list('id', flat=True))
+
+
+class OrderAttachmentEvidence(models.Model):
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    attachment = models.ImageField(upload_to='documents/orders/order_attachments', null=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+    deleted_date = models.DateTimeField(blank=True, null=True)
+
+    def delete(self, using=None, keep_parents=True, deleted_by=None):
+        self.deleted = True
+        self.deleted_date = timezone.now()
+        # self.deleted_by = deleted_by
+        self.save()
+
+
+class OrderAttachment(models.Model):
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    attachment = models.ImageField(upload_to='documents/orders/order_attachments', null=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+    deleted_date = models.DateTimeField(blank=True, null=True)
+
+    def delete(self, using=None, keep_parents=True, deleted_by=None):
+        self.deleted = True
+        self.deleted_date = timezone.now()
+        # self.deleted_by = deleted_by
+        self.save()
 
 
 class OrderEmployee(models.Model):

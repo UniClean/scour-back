@@ -1,7 +1,9 @@
 from datetime import datetime
-
 from rest_framework.decorators import api_view
 from rest_framework import generics
+from rest_framework.parsers import FileUploadParser
+from rest_framework.views import APIView
+from rest_framework.exceptions import ParseError
 from .serializers import OrderSerializer, OrderCreateSerializer, OrderAssignEmployeesSerializer, \
     OrderEmployeeCreateSerializer, OrderEmployeeCreateListSerializer, OrderAddSupervisorCommentSerializer, GetOrdersByStatusSerializer
 from .models import Order
@@ -10,9 +12,12 @@ from rest_framework import status
 from django.http import JsonResponse
 from employees import models as employee_models
 from drf_yasg.utils import swagger_auto_schema
-from .models import OrderEmployee, CleaningOrderStatus
+from .models import OrderEmployee, CleaningOrderStatus, OrderAttachment, OrderAttachmentEvidence
 from .serializers import OrderEmployeeSerializer
-
+from django.utils import timezone
+from django.http import HttpResponse
+import os
+import mimetypes
 
 class OrderList(generics.ListCreateAPIView):
     queryset = Order.objects.filter(deleted=False)
@@ -155,3 +160,66 @@ class OrderListByStatus(generics.ListAPIView):
         status_name = self.kwargs['status']
         queryset = Order.objects.filter(status=CleaningOrderStatus[status_name])
         return queryset
+
+
+class OrderAttachmentsUploadView(APIView):
+    parser_class = (FileUploadParser,)
+
+    def post(self, request, format=None):
+        if 'attachment' not in request.data:
+            raise ParseError("Empty content")
+        if 'order_id' not in request.data:
+            raise ParseError("Order id not provided")
+        order_id = request.data['order_id']
+        order = Order.objects.get(pk=order_id)
+        f = request.data['attachment']
+        f.name = str(order.id)+ "_" + timezone.now().strftime("%Y%m%d%H%M%S") + "_" + f.name
+        order_attachment = OrderAttachment(order_id=order, attachment=f)
+        order_attachment.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+
+class OrderAttachmentEvidencesUploadView(APIView):
+    parser_class = (FileUploadParser,)
+
+    def post(self, request, format=None):
+        if 'attachment' not in request.data:
+            raise ParseError("Empty content")
+        if 'order_id' not in request.data:
+            raise ParseError("Order id not provided")
+        order_id = request.data['order_id']
+        order = Order.objects.get(pk=order_id)
+        f = request.data['attachment']
+        f.name = str(order.id)+ "_" + timezone.now().strftime("%Y%m%d%H%M%S") + "_" + "_evidence"+ f.name
+        order_attachment = OrderAttachmentEvidence(order_id=order, attachment=f)
+        order_attachment.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+
+def get_order_attachment(request, attachment_id):
+    file = OrderAttachment.objects.get(id=attachment_id).attachment
+    file_content = get_file_content(file)
+    response = HttpResponse(file_content, content_type=get_content_type(file.name))
+    response['Content-Disposition'] = f'attachment; filename="{file.name}"'
+
+    return response
+
+
+def get_order_attachment_evidence(request, attachment_evidence_id):
+    file = OrderAttachmentEvidence.objects.get(id=attachment_evidence_id).attachment
+    file_content = get_file_content(file)
+    response = HttpResponse(file_content, content_type=get_content_type(file.name))
+    response['Content-Disposition'] = f'attachment; filename="{file.name}"'
+
+    return response
+
+
+def get_file_content(file):
+    with file.open('rb') as f:
+        file_content = f.read()
+    return file_content
+
+
+def get_content_type(filename):
+    content_type, encoding = mimetypes.guess_type(filename)
+    return content_type

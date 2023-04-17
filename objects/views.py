@@ -153,7 +153,6 @@ def view_that_serves_photo(request, filename):
 
 def get_object_image(request, object_id):
     file = Object.objects.get(id=object_id).object_image
-    print(file)
     file_content = get_file_content(file)
     response = HttpResponse(file_content, content_type=get_content_type(file.name))
     response['Content-Disposition'] = f'attachment; filename="{file.name}"'

@@ -1,9 +1,19 @@
 from rest_framework import serializers
-from .models import Order, CleaningOrderStatus, CleaningOrderType, OrderEmployee
+from .models import Order, CleaningOrderStatus, CleaningOrderType, OrderEmployee, OrderAttachment, OrderAttachmentEvidence
 from objects.serializers import ObjectSerializer
 from enumchoicefield import EnumChoiceField
 from employees.serializers import ShortEmployeeSerializer
 
+
+class OrderAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderAttachment
+        fields = ('id', 'created_at')
+
+class OrderAttachmentEvidenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderAttachmentEvidence
+        fields = ('id', 'created_at')
 
 class OrderSerializer(serializers.ModelSerializer):
     object = ObjectSerializer(source='object_id', many=False, read_only=True)
@@ -12,7 +22,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        exclude = ('object_id',)
+        fields = ['id', 'object', 'type', 'status', 'additional_information',
+                  'supervisor_comments', 'report_deadline',
+                  'order_attachments_ids', 'order_attachment_evidences_ids',
+                    'expiration_deadline', 'confirmed_time', 'start_time',
+                    'completed_time', 'created', 'updated', 'deleted', 'deleted_date',
+                  ]
         depth = 1
 
 

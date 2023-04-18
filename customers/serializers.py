@@ -5,7 +5,9 @@ from .models import Customer, CustomerContract
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = '__all__'
+        fields = ['id', 'name', 'is_vip', 'additional_information', 'email', 'website', 'phone_number','image_url',
+                  'customer_contract_ids',
+                  'created', 'updated', 'deleted', 'deleted_date']
 
 
 class ShortCustomerSerializer(serializers.ModelSerializer):
@@ -32,7 +34,7 @@ class CustomerContractFileSerializer(serializers.ModelSerializer):
     contract_file_url = serializers.SerializerMethodField()
     class Meta:
         model = CustomerContract
-        fields = ['customer_id', 'customer', 'contract_file', 'contract_file_url', 'created', 'updated', 'deleted', 'deleted_date']
+        fields = ['id', 'customer_id', 'customer', 'contract_file', 'contract_file_url', 'created', 'updated', 'deleted', 'deleted_date']
 
     def get_contract_file_url(self, obj):
         return obj.contract_file.url

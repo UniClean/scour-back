@@ -34,6 +34,9 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
+    def customer_contract_ids(self):
+        return list(self.customercontract_set.values_list('id', flat=True))
+
 
 class CustomerContract(models.Model):
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)

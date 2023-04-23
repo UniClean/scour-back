@@ -10,6 +10,12 @@ class OrderEmployeeSalariesSerializer(serializers.ModelSerializer):
         fields = ['id', 'employee', 'worked_hours_amount', 'is_paid', 'object_name', 'payout_per_order', 'employee_base_rate']
 
 
+class OrderShortEmployeeSalariesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderEmployee
+        fields = ['id', 'worked_hours_amount', 'is_paid', 'object_name', 'payout_per_order', 'employee_base_rate']
+
+
 class OrderEmployeeSalariesChangePaidToTrueStatusSerializer(serializers.ModelSerializer):
     employee_salary_ids = serializers.ListField(child=serializers.IntegerField())
 

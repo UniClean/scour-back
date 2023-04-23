@@ -97,21 +97,23 @@ class OrderEmployee(models.Model):
     order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
     employee_id = models.ForeignKey(employee_models.Employee, on_delete=models.SET_NULL, null=True)
     worked_hours_amount = models.IntegerField(default=0)
+    is_paid = models.BooleanField(default=False)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateTimeField(blank=True, null=True)
-
     def delete(self, using=None, keep_parents=True, deleted_by=None):
         self.deleted = True
         self.deleted_date = timezone.now()
         # self.deleted_by = deleted_by
         self.save()
 
-    # deleted_by = models.ForeignKey(
-    #     settings.AUTH_USER_MODEL,
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True
-    # )
+    def payout_per_order(self):
+        return self.worked_hours_amount * self.employee_id.salary
+
+    def object_name(self):
+        return self.order_id.object_id.name
+
+    def employee_base_rate(self):
+        return self.employee_id.salary

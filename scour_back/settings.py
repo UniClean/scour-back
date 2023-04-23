@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'inventory',
     'equipments',
     'equipment_orders',
-    'inventory_orders'
+    'inventory_orders',
+    'salary'
 ]
 
 MIDDLEWARE = [

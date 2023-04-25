@@ -7,7 +7,7 @@ class OrderEmployeeSalariesSerializer(serializers.ModelSerializer):
     employee = ShortEmployeeSerializer(source='employee_id', many=False, read_only=True)
     class Meta:
         model = OrderEmployee
-        fields = ['id', 'employee', 'worked_hours_amount', 'is_paid', 'object_name', 'payout_per_order', 'employee_base_rate']
+        fields = ['id', 'employee', 'worked_hours_amount', 'is_paid', 'object_name','dateOfMonth', 'payout_per_order', 'employee_base_rate']
 
 
 class OrderShortEmployeeSalariesSerializer(serializers.ModelSerializer):

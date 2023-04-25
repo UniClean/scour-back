@@ -115,5 +115,8 @@ class OrderEmployee(models.Model):
     def object_name(self):
         return self.order_id.object_id.name
 
+    def dateOfMonth(self):
+        return self.order_id.completed_time
+
     def employee_base_rate(self):
         return self.employee_id.salary

@@ -1,3 +1,5 @@
+import mimetypes
+
 from rest_framework import generics
 from .serializers import CustomerSerializer, CustomerCreateSerializer,CustomerContractFileSerializer
 from .models import Customer, CustomerContract
@@ -79,7 +81,7 @@ class CustomerContractDetail(generics.RetrieveAPIView):
 def get_contract_file_content(request, id):
     file = CustomerContract.objects.get(id=id).contract_file
     file_content = get_file_content(file)
-    response = HttpResponse(file_content, content_type='application/pdf')
+    response = HttpResponse(file_content, content_type=get_content_type(file.name))
     response['Content-Disposition'] = f'attachment; filename="{file.name}"'
 
     return response
@@ -89,6 +91,9 @@ def get_file_content(file):
         file_content = f.read()
     return file_content
 
+def get_content_type(filename):
+    content_type, encoding = mimetypes.guess_type(filename)
+    return content_type
 
 class ContractsByCustomerId(generics.ListAPIView):
     queryset = CustomerContract.objects.all()

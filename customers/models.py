@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+import os
 
 class Customer(models.Model):
     name = models.CharField(max_length=100)
@@ -39,6 +39,7 @@ class CustomerContract(models.Model):
     deleted_date = models.DateTimeField(blank=True, null=True)
 
     def delete(self, using=None, keep_parents=True, deleted_by=None):
+
         self.deleted = True
         self.deleted_date = timezone.now()
         self.save()

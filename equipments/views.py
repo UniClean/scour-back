@@ -4,13 +4,15 @@ from .models import Equipment
 from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.http import JsonResponse
 from objects import models as object_models
+from rest_framework.permissions import IsAuthenticated
 
 
 class EquipmentList(generics.ListCreateAPIView):
     queryset = Equipment.objects.filter(deleted=False)
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -37,6 +39,7 @@ class EquipmentList(generics.ListCreateAPIView):
 
 
 class EquipmentListByObjectId(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Equipment.objects.all()
     serializer_class = EquipmentSerializer
     def get_queryset(self, *args, **kwargs):
@@ -46,23 +49,27 @@ class EquipmentListByObjectId(generics.ListAPIView):
 
 
 class EquipmentDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Equipment.objects.all()
     serializer_class = EquipmentSerializer
     lookup_field = 'id'
 
 
 class EquipmentUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Equipment.objects.all()
     serializer_class = EquipmentCreateSerializer
     lookup_field = 'id'
 
 
 class EquipmentDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Equipment.objects.all()
     lookup_field = 'id'
 
 
 @swagger_auto_schema(method='post', request_body=EquipmentAssignObjectSerializer)
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def assign_object(request, id):
     try:

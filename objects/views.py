@@ -4,7 +4,7 @@ from .serializers import ObjectSerializer, ObjectCreateSerializer, RequiredObjec
 from .models import Object, RequiredObjectInventory
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from drf_yasg.utils import swagger_auto_schema
 from django.http import JsonResponse, FileResponse
 from rest_framework.parsers import FileUploadParser
@@ -16,9 +16,11 @@ from django.urls import reverse
 from django.conf import settings
 import os
 import mimetypes
+from rest_framework.permissions import IsAuthenticated
 
 
 class ObjectList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Object.objects.filter(deleted=False)
 
     def get_serializer_class(self):
@@ -46,23 +48,27 @@ class ObjectList(generics.ListCreateAPIView):
 
 
 class ObjectDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Object.objects.all()
     serializer_class = ObjectSerializer
     lookup_field = 'id'
 
 
 class ObjectUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Object.objects.all()
     serializer_class = ObjectCreateSerializer
     lookup_field = 'id'
 
 
 class ObjectDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Object.objects.all()
     lookup_field = 'id'
 
 
 class RequiredObjectInventoryList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = RequiredObjectInventory.objects.filter(deleted=False)
 
     def get_serializer_class(self):
@@ -90,6 +96,7 @@ class RequiredObjectInventoryList(generics.ListCreateAPIView):
 
 
 class RequiredObjectInventoryListByObjectId(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = RequiredObjectInventory.objects.all()
     serializer_class = RequiredObjectInventorySerializer
     def get_queryset(self, *args, **kwargs):
@@ -99,6 +106,7 @@ class RequiredObjectInventoryListByObjectId(generics.ListAPIView):
 
 @swagger_auto_schema(method='post', request_body=RequiredObjectInventoryCreateListSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_required_object_inventories(request):
     required_object_inventories = request.data.get('required_object_inventories', [])
     serializer = RequiredObjectInventoryCreateSerializer(data=required_object_inventories, many=True)
@@ -109,23 +117,27 @@ def add_required_object_inventories(request):
 
 
 class RequiredObjectInventoryDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = RequiredObjectInventory.objects.all()
     serializer_class = RequiredObjectInventorySerializer
     lookup_field = 'id'
 
 
 class RequiredObjectInventoryUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = RequiredObjectInventory.objects.all()
     serializer_class = RequiredObjectInventoryCreateSerializer
     lookup_field = 'id'
 
 
 class RequiredObjectInventoryDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = RequiredObjectInventory.objects.all()
     lookup_field = 'id'
 
 
 class ObjectImageUploadView(APIView):
+    permission_classes = [IsAuthenticated]
     parser_class = (FileUploadParser,)
 
     def post(self, request, format=None):

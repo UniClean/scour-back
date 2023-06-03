@@ -171,7 +171,7 @@ class OrderListByStatus(generics.ListAPIView):
     serializer_class = OrderSerializer
     def get_queryset(self, *args, **kwargs):
         status_name = self.kwargs['status']
-        queryset = Order.objects.filter(status=CleaningOrderStatus[status_name])
+        queryset = Order.objects.filter(status=CleaningOrderStatus[status_name], deleted=False)
         return queryset
 
 

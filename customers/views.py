@@ -1,5 +1,5 @@
 import mimetypes
-
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from .serializers import CustomerSerializer, CustomerCreateSerializer,CustomerContractFileSerializer
 from .models import Customer, CustomerContract
@@ -14,6 +14,7 @@ from django.http import HttpResponse
 
 class CustomerList(generics.ListCreateAPIView):
     queryset = Customer.objects.filter(deleted=False)
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -40,23 +41,27 @@ class CustomerList(generics.ListCreateAPIView):
 
 
 class CustomerDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     lookup_field = 'id'
 
 
 class CustomerUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Customer.objects.all()
     serializer_class = CustomerCreateSerializer
     lookup_field = 'id'
 
 
 class CustomerDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Customer.objects.all()
     lookup_field = 'id'
 
 
 class CustomerContractUploadView(APIView):
+    permission_classes = [IsAuthenticated]
     parser_class = (FileUploadParser,)
 
     def post(self, request, format=None):
@@ -74,6 +79,7 @@ class CustomerContractUploadView(APIView):
 
 
 class CustomerContractDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = CustomerContract.objects.all()
     serializer_class = CustomerContractFileSerializer
     lookup_field = 'id'
@@ -98,6 +104,7 @@ def get_content_type(filename):
 class ContractsByCustomerId(generics.ListAPIView):
     queryset = CustomerContract.objects.all()
     serializer_class = CustomerContractFileSerializer
+    permission_classes = [IsAuthenticated]
     def get_queryset(self, *args, **kwargs):
         customer_id = self.kwargs['customer_id']
         queryset = CustomerContract.objects.filter(customer_id_id=customer_id)

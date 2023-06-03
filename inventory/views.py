@@ -3,10 +3,12 @@ from .serializers import InventorySerializer, InventoryCreateSerializer
 from .models import Inventory
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 
 class InventoryList(generics.ListCreateAPIView):
     queryset = Inventory.objects.filter(deleted=False)
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -33,17 +35,20 @@ class InventoryList(generics.ListCreateAPIView):
 
 
 class InventoryDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Inventory.objects.all()
     serializer_class = InventorySerializer
     lookup_field = 'id'
 
 
 class InventoryUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Inventory.objects.all()
     serializer_class = InventoryCreateSerializer
     lookup_field = 'id'
 
 
 class InventoryDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Inventory.objects.all()
     lookup_field = 'id'

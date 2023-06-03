@@ -4,10 +4,12 @@ from .models import Employee, Position
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 
 class EmployeeList(generics.ListCreateAPIView):
     queryset = Employee.objects.filter(deleted=False)
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -33,6 +35,7 @@ class EmployeeList(generics.ListCreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EmployeeListByPosition(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, position_id):
         employees = Employee.objects.filter(position_id=position_id)
         serializer = EmployeeSerializer(employees, many=True)
@@ -40,23 +43,27 @@ class EmployeeListByPosition(APIView):
 
 
 class EmployeeDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     lookup_field = 'id'
 
 
 class EmployeeUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Employee.objects.all()
     serializer_class = EmployeeCreateSerializer
     lookup_field = 'id'
 
 
 class EmployeeDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Employee.objects.all()
     lookup_field = 'id'
 
 
 class PositionList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Position.objects.filter(deleted=False)
 
     def get_serializer_class(self):
@@ -84,17 +91,20 @@ class PositionList(generics.ListCreateAPIView):
 
 
 class PositionDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
     lookup_field = 'id'
 
 
 class PositionUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Position.objects.all()
     serializer_class = PositionCreateSerializer
     lookup_field = 'id'
 
 
 class PositionDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Position.objects.all()
     lookup_field = 'id'

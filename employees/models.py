@@ -26,21 +26,14 @@ class Employee(models.Model):
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateTimeField(blank=True, null=True)
 
-    # deleted_by = models.ForeignKey(
-    #     settings.AUTH_USER_MODEL,
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True
-    # )
 
     def delete(self, using=None, keep_parents=True, deleted_by=None):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
     def __str__(self):
-        return self.name
+        return self.first_name + ' ' + self.last_name
 
     class Meta:
         ordering = ['created']
@@ -63,7 +56,6 @@ class Position(models.Model):
     def delete(self, using=None, keep_parents=True, deleted_by=None):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
     def __str__(self):

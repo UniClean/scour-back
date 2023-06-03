@@ -5,8 +5,6 @@ from employees.models import Employee
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

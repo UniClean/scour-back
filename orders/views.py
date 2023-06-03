@@ -1,5 +1,5 @@
 from datetime import datetime
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
@@ -16,10 +16,11 @@ from .models import OrderEmployee, CleaningOrderStatus, OrderAttachment, OrderAt
 from .serializers import OrderEmployeeSerializer
 from django.utils import timezone
 from django.http import HttpResponse
-import os
+from rest_framework.permissions import IsAuthenticated
 import mimetypes
 
 class OrderList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Order.objects.filter(deleted=False)
 
     def get_serializer_class(self):
@@ -48,23 +49,27 @@ class OrderList(generics.ListCreateAPIView):
 
 
 class OrderDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     lookup_field = 'id'
 
 
 class OrderUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     serializer_class = OrderCreateSerializer
     lookup_field = 'id'
 
 
 class OrderDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     lookup_field = 'id'
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def complete_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.IN_PROGRESS:
@@ -77,6 +82,7 @@ def complete_order(request, order_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def confirm_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.COMPLETED:
@@ -89,6 +95,7 @@ def confirm_order(request, order_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def start_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order.status == CleaningOrderStatus.PLANNED:
@@ -101,6 +108,7 @@ def start_order(request, order_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def decline_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     order.status = CleaningOrderStatus.DECLINED
@@ -110,6 +118,7 @@ def decline_order(request, order_id):
 
 @swagger_auto_schema(method='post', request_body=OrderAssignEmployeesSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def assign_employees(request, order_id):
     order = Order.objects.get(pk=order_id)
     employee_ids = request.data.get('employeeIds', [])
@@ -122,6 +131,7 @@ def assign_employees(request, order_id):
 
 @swagger_auto_schema(method='post', request_body=OrderAddSupervisorCommentSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def update_supervisor_comments(request, order_id):
     order = Order.objects.get(pk=order_id)
     order.supervisor_comments = request.data.get('supervisor_comments')
@@ -131,6 +141,7 @@ def update_supervisor_comments(request, order_id):
 
 @swagger_auto_schema(method='post', request_body=OrderEmployeeCreateListSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def assign_employees_to_order(request, order_id):
     try:
         order = Order.objects.get(pk=order_id)
@@ -146,6 +157,7 @@ def assign_employees_to_order(request, order_id):
 
 
 class OrderEmployeeList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = OrderEmployee.objects.all()
     serializer_class = OrderEmployeeSerializer
     def get_queryset(self, *args, **kwargs):
@@ -154,6 +166,7 @@ class OrderEmployeeList(generics.ListAPIView):
         return queryset
 
 class OrderListByStatus(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     def get_queryset(self, *args, **kwargs):
@@ -163,6 +176,7 @@ class OrderListByStatus(generics.ListAPIView):
 
 
 class OrderAttachmentsUploadView(APIView):
+    permission_classes = [IsAuthenticated]
     parser_class = (FileUploadParser,)
 
     def post(self, request, format=None):
@@ -180,6 +194,7 @@ class OrderAttachmentsUploadView(APIView):
 
 
 class OrderAttachmentEvidencesUploadView(APIView):
+    permission_classes = [IsAuthenticated]
     parser_class = (FileUploadParser,)
 
     def post(self, request, format=None):

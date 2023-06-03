@@ -4,14 +4,16 @@ from .serializers import InventoryOrderSerializer, InventoryOrderCreateSerialize
 from .models import InventoryOrder, InventoryOrderItem, InventoryOrderStatus
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from drf_yasg.utils import swagger_auto_schema
 from django.http import JsonResponse
 from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
 
 
 class InventoryOrderList(generics.ListCreateAPIView):
     queryset = InventoryOrder.objects.filter(deleted=False)
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -38,22 +40,26 @@ class InventoryOrderList(generics.ListCreateAPIView):
 
 
 class InventoryOrderDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = InventoryOrder.objects.all()
     serializer_class = InventoryOrderSerializer
     lookup_field = 'id'
 
 
 class InventoryOrderUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = InventoryOrder.objects.all()
     serializer_class = InventoryOrderCreateSerializer
     lookup_field = 'id'
 
 
 class InventoryOrderDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = InventoryOrder.objects.all()
     lookup_field = 'id'
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def start_order(request, order_id):
     order = InventoryOrder.objects.get(pk=order_id)
     if order.status == InventoryOrderStatus.CREATED:
@@ -66,6 +72,7 @@ def start_order(request, order_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def complete_order(request, order_id):
     order = InventoryOrder.objects.get(pk=order_id)
     if order.status == InventoryOrderStatus.IN_PROGRESS:
@@ -78,6 +85,7 @@ def complete_order(request, order_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def decline_order(request, order_id):
     order = InventoryOrder.objects.get(pk=order_id)
     order.status = InventoryOrderStatus.DECLINED
@@ -86,6 +94,7 @@ def decline_order(request, order_id):
 
 
 class InventoryOrderItemListByOrderId(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = InventoryOrderItem.objects.all()
     serializer_class = InventoryOrderItemSerializer
     def get_queryset(self, *args, **kwargs):
@@ -96,6 +105,7 @@ class InventoryOrderItemListByOrderId(generics.ListAPIView):
 
 @swagger_auto_schema(method='post', request_body=InventoryOrderItemCreateListSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_inventory_order_items(request):
     inventory_order_items = request.data.get('inventory_order_items', [])
     serializer = InventoryOrderItemCreateSerializer(data=inventory_order_items, many=True)
@@ -106,18 +116,21 @@ def add_inventory_order_items(request):
 
 
 class InventoryOrderItemDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = InventoryOrderItem.objects.all()
     serializer_class = InventoryOrderItemSerializer
     lookup_field = 'id'
 
 
 class InventoryOrderItemUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = InventoryOrderItem.objects.all()
     serializer_class = InventoryOrderItemCreateSerializer
     lookup_field = 'id'
 
 
 class RequiredObjectInventoryDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = InventoryOrderItem.objects.all()
     lookup_field = 'id'
 

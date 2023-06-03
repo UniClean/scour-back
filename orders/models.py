@@ -45,15 +45,8 @@ class Order(models.Model):
     def delete(self, using=None, keep_parents=True, deleted_by=None):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
-    # deleted_by = models.ForeignKey(
-    #     settings.AUTH_USER_MODEL,
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True
-    # )
     def order_attachments_ids(self):
         return list(self.orderattachment_set.all().values_list('id', flat=True))
 
@@ -73,7 +66,6 @@ class OrderAttachmentEvidence(models.Model):
     def delete(self, using=None, keep_parents=True, deleted_by=None):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
 
@@ -89,7 +81,6 @@ class OrderAttachment(models.Model):
     def delete(self, using=None, keep_parents=True, deleted_by=None):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
 
@@ -106,7 +97,6 @@ class OrderEmployee(models.Model):
     def delete(self, using=None, keep_parents=True, deleted_by=None):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
     def payout_per_order(self):

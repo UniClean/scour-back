@@ -11,7 +11,7 @@ from django.db.models.functions import ExtractMonth
 
 class EmployeeSalaryListByMonth(APIView):
     def get(self, request, employee_id, month, year):
-        employee_salaries = OrderEmployee.objects.filter(employee_id=employee_id, order_id__start_time__month=month, order_id__start_time__year=year)
+        employee_salaries = OrderEmployee.objects.filter(employee_id=employee_id, order_id__completed_time__month=month, order_id__completed_time__year=year)
         serializer = OrderEmployeeSalariesSerializer(employee_salaries, many=True)
         return Response(serializer.data)
 
@@ -22,7 +22,7 @@ class SalaryListByMonth(APIView):
         for employee in salary_employees_ids:
             emp = Employee.objects.get(id=employee['employee_id'])
             employee_salaries = []
-            for salary in OrderEmployee.objects.filter(employee_id=emp, order_id__start_time__month=month, order_id__start_time__year=year):
+            for salary in OrderEmployee.objects.filter(employee_id=emp, order_id__completed_time__month=month, order_id__completed_time__year=year):
                 employee_salaries.append(salary)
             employees_salaries.append({'employee_id': emp.id ,'employee': emp.first_name + " " +emp.last_name, 'salaries': OrderShortEmployeeSalariesSerializer(employee_salaries, many=True).data})
         return Response(employees_salaries)

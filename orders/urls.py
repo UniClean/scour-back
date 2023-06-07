@@ -20,6 +20,8 @@ urlpatterns = [
     path('orders/attachment/<int:attachment_id>/file/', views.get_order_attachment, name='object-file-retrieve'),
     path('orders/upload_attachment/', views.OrderAttachmentsUploadView.as_view(), name='object-image-upload'),
 
+    path('orders/deadline_check_service/', views.check_and_set_overdue_deadline_status, name='order-deadline-check-service'),
+
     path('orders/attachment_evidence/<int:attachment_evidence_id>/file/', views.get_order_attachment_evidence, name='object-file-retrieve'),
     path('orders/upload_attachment_evidence/', views.OrderAttachmentEvidencesUploadView.as_view(), name='object-image-upload'),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

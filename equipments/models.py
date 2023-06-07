@@ -14,10 +14,9 @@ class Equipment(models.Model):
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateTimeField(blank=True, null=True)
 
-    def delete(self, using=None, keep_parents=True, deleted_by=None):
+    def delete(self, using=None, keep_parents=True):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
     def __str__(self):

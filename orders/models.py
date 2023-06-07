@@ -42,7 +42,7 @@ class Order(models.Model):
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateTimeField(blank=True, null=True)
 
-    def delete(self, using=None, keep_parents=True, deleted_by=None):
+    def delete(self, using=None, keep_parents=True):
         self.deleted = True
         self.deleted_date = timezone.now()
         self.save()
@@ -63,7 +63,7 @@ class OrderAttachmentEvidence(models.Model):
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateTimeField(blank=True, null=True)
 
-    def delete(self, using=None, keep_parents=True, deleted_by=None):
+    def delete(self, using=None, keep_parents=True):
         self.deleted = True
         self.deleted_date = timezone.now()
         self.save()
@@ -78,7 +78,7 @@ class OrderAttachment(models.Model):
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateTimeField(blank=True, null=True)
 
-    def delete(self, using=None, keep_parents=True, deleted_by=None):
+    def delete(self, using=None, keep_parents=True):
         self.deleted = True
         self.deleted_date = timezone.now()
         self.save()
@@ -94,7 +94,7 @@ class OrderEmployee(models.Model):
     updated = models.DateTimeField(auto_now=True)
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateTimeField(blank=True, null=True)
-    def delete(self, using=None, keep_parents=True, deleted_by=None):
+    def delete(self, using=None, keep_parents=True):
         self.deleted = True
         self.deleted_date = timezone.now()
         self.save()

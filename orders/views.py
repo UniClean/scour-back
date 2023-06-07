@@ -238,3 +238,13 @@ def get_file_content(file):
 def get_content_type(filename):
     content_type, encoding = mimetypes.guess_type(filename)
     return content_type
+
+
+@api_view(['POST'])
+def check_and_set_overdue_deadline_status(request):
+    orders = Order.objects.filter(status=CleaningOrderStatus.PLANNED, deleted=False)
+    for order in orders:
+        if order.report_deadline > timezone.now():
+            order.status = CleaningOrderStatus.OVERDUE
+            order.save()
+    return JsonResponse({'status': 'success', 'message': 'Orders were checked and updated.'})

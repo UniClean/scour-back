@@ -9,9 +9,8 @@ class Account(models.Model):
     employee_id = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
     phone_number = models.CharField(max_length=50, blank=True, null=True)
 
-    def delete(self, using=None, keep_parents=True, deleted_by=None):
+    def delete(self, using=None, keep_parents=True):
         self.deleted = True
         self.deleted_date = timezone.now()
-        # self.deleted_by = deleted_by
         self.save()
 
